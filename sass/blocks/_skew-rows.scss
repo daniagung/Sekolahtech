@@ -1,0 +1,154 @@
+/*------------- #SKEW-ROWS --------------*/
+
+
+.section-bg-skew {
+  position: relative;
+  background-size: cover;
+
+  & > .container {
+    position: relative;
+    z-index: 2;
+  }
+
+  &:before, &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 100%;
+    max-width: 100%;
+    left: 0;
+  }
+
+  &:before {
+    height: 170px;
+    background: linear-gradient(to right bottom, $white-color 50%, transparent 50%);
+    top: -1px;
+  }
+
+  &:after {
+    height: 170px;
+    background: linear-gradient(to right bottom, transparent 50%, $white-color 50%);
+    bottom: -1px;
+  }
+}
+
+
+
+/*------------- #Rounded-ROWS --------------*/
+
+.section-bg-curved {
+  position: relative;
+  background-size: cover;
+
+  & > .container {
+    position: relative;
+    z-index: 2;
+  }
+
+  &:before, &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: calc(100% + 10px);
+  }
+
+  &:before {
+    top: -10px;
+    left: -5px;
+  }
+
+  &:after {
+    bottom: -10px;
+    left: -5px;
+  }
+}
+
+.bg-rounded-style1 {
+  &:before {
+    content: url("../svg/01-wave-rotate-180.svg");
+  }
+
+  &:after {
+    content: url("../svg/01-wave.svg");
+  }
+}
+
+.bg-rounded-style2 {
+  &:before {
+    content: url("../svg/02-wave.svg");
+  }
+
+  &:after {
+    content: url("../svg/03-wave.svg");
+  }
+}
+
+.bg-rounded-style3 {
+  &:before {
+    content: url("../svg/04-wave.svg");
+  }
+
+  &:after {
+    content: url("../svg/05-wave.svg");
+  }
+}
+
+.bg-rounded-style4 {
+  &:before {
+    content: url("../svg/06-wave.svg");
+  }
+
+  &:after {
+    content: url("../svg/06-wave-inverted.svg");
+  }
+}
+
+.not-top-element {
+  &:before {
+    display: none;
+  }
+}
+
+.not-bottom-element {
+  &:after {
+    display: none;
+  }
+}
+
+
+/*================= Responsive Mode ============*/
+
+
+@media (max-width: 800px) {
+  .bg-skew > * {
+    padding: 0 70px;
+  }
+
+  .bg-skew.medium-padding120 {
+    padding: 60px 0;
+  }
+
+  .bg-skew.pt180 {
+    padding-top: 90px;
+  }
+
+  .bg-skew.pt120 {
+    padding-top: 60px;
+  }
+
+  .negative-margin-bottom80 {
+    margin-bottom: auto;
+  }
+
+  body.skew-rows .bg-skew:last-of-type {
+    margin-bottom: -40px;
+  }
+
+  .section-bg-skew::before {
+	border-bottom-width: 90px;
+  }
+
+  .section-bg-skew::after {
+	border-bottom-width: 90px
+  }
+}

@@ -1,0 +1,87 @@
+<?php
+get_header();
+global $wp_query;
+
+$ext_portfolio_instance = fw()->extensions->get( 'portfolio' );
+$ext_portfolio_settings = $ext_portfolio_instance->get_settings();
+
+$taxonomy   = $ext_portfolio_settings['taxonomy_name'];
+$term       = get_term_by( 'slug', get_query_var( 'term' ), $taxonomy );
+$term_id    = ( ! empty( $term->term_id ) ) ? $term->term_id : 0;
+$categories = fw_ext_portfolio_get_listing_categories( $term_id );
+
+$listing_classes = fw_ext_portfolio_get_sort_classes( $wp_query->posts, $categories );
+
+$items_design = fw_get_db_customizer_option('portfolio_layout_design/value', 'apps');
+
+$grid_item_classes = '';
+
+	if ( 'grid' === $items_design ) {
+		$grid_item_classes .= ' col col-lg-4 col-md-6 col-sm-12';
+	} else {
+		$grid_item_classes .= ' col col-lg-6 col-md-6 col-sm-12';
+	}
+
+
+$loop_data       = array(
+	'settings'        => $ext_portfolio_instance->get_settings(),
+	'categories'      => $categories,
+	'item_design'     => $items_design,
+	'listing_classes' => $listing_classes
+);
+set_query_var( 'fw_portfolio_loop_data', $loop_data );
+
+$page_title = ! empty( $term->description ) ? $term->description : $term->name;
+$terms      = get_terms( $taxonomy, array( 'hide_empty' => true ) );
+
+$layout = utouch_sidebar_conf();
+?>
+    <!-- Case Item -->
+    <div id="primary" class="container">
+        <div class="row medium-padding30">
+            <div class="<?php echo esc_attr( $layout['content-classes'] ) ?>">
+                <main id="main" class="site-main" >
+                    <div class="heading align-center">
+						<?php echo utouch_html_tag( 'h2', array( 'class' => 'h1 heading-title' ), $page_title ); ?>
+                    </div>
+					<?php if ( ! empty( $terms ) ) : ?>
+                        <ul class="cat-list align-center">
+							<?php foreach ( $terms as $term ) : ?>
+								<?php $active = ( $term->term_id == $term_id ) ? 'active' : ''; ?>
+                                <li class="cat-list__item <?php echo esc_attr( $active ) ?>"><a
+                                            href="<?php echo esc_url( get_term_link( $term->slug, $taxonomy ) ) ?>"><?php echo esc_html( $term->name ); ?></a>
+                                </li>
+							<?php endforeach; ?>
+                        </ul>
+					<?php endif; ?>
+
+					<?php if ( have_posts() ) : ?>
+                        <div class="row sorting-container" data-layout="packery" id="portfolio-loop">
+	                        <?php while ( have_posts() ) : the_post(); ?>
+                                <div class="<?php echo esc_attr( $grid_item_classes ); ?>">
+			                        <?php get_template_part( 'parts/portfolio/loop_item', $items_design ); ?>
+                                </div>
+	                        <?php endwhile; ?>
+                        </div>
+
+						<?php utouch_paging_nav(); ?>
+
+					<?php else : ?>
+						<?php get_template_part( 'content', 'none' ); ?>
+					<?php endif; ?>
+                </main><!-- #main -->
+            </div>
+			<?php if ( 'full' !== $layout['position'] ) { ?>
+                <div class="<?php echo esc_attr( $layout['sidebar-classes'] ) ?>">
+					<?php get_sidebar(); ?>
+                </div>
+			<?php } ?>
+        </div><!-- #row -->
+    </div><!-- #primary -->
+    <!-- End Case Item -->
+<?php
+unset( $ext_portfolio_instance );
+unset( $ext_portfolio_settings );
+set_query_var( 'fw_portfolio_loop_data', '' );
+
+get_footer();
